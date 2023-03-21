@@ -16,11 +16,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     log: true,
     waitConfirmations: 1
   })
-  console.log('contract address: ', pairTokenDeploy.address)
 
   if (verifyContractChainIds.includes(chainId)) {
     await verify(pairTokenDeploy.address, [], 'contracts/simple-token/PairToken.sol:PairToken')
   }
+  console.log('contract address: ', pairTokenDeploy.address)
+  console.log('-----------')
 };
 
 func.tags = ["pair-token", "all"]

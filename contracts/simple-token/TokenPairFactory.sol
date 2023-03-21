@@ -43,7 +43,9 @@ contract TokenPairFactory {
         TokenPair tokenPair = new TokenPair();
 
         pair = address(tokenPair);
-        TokenPair(pair).init(token0, token1, rate);
+        tokenPair.init(token0, token1, rate);
+        tokenPair.setRewardToken(rewardToken, rewardSpeed);
+
         getPair[token0][token1] = pair;
         getPair[token1][token0] = pair;
         pairsList.push(pair);
@@ -51,11 +53,16 @@ contract TokenPairFactory {
         emit EPairCreated(token0, token1, pair, pairsList.length);
     }
 
-    function setRewardToken(address _token) public onlyOwner {
+    function setRewardInfo(address _token) public onlyOwner {
         rewardToken = _token;
     }
 
     function setRewardSpeed(uint256 _speed) public onlyOwner {
+        rewardSpeed = _speed;
+    }
+
+    function setRewardInfo(address _token, uint256 _speed) public onlyOwner {
+        rewardToken = _token;
         rewardSpeed = _speed;
     }
 }

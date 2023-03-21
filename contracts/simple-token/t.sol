@@ -102,8 +102,7 @@ interface IERC20 {
     ) external returns (bool);
 }
 
-
-// 
+//
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
 pragma solidity ^0.8.0;
@@ -129,7 +128,7 @@ interface IERC20Metadata is IERC20 {
      */
     function decimals() external view returns (uint8);
 }
-// 
+//
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
 pragma solidity ^0.8.0;
@@ -143,7 +142,7 @@ pragma solidity ^0.8.0;
  * is concerned).
  *
  * This contract is only required for intermediate, library-like contracts.
- * 
+ *
  * 中文解释：
  * 1、简单的理解就是一个抽象合约，里面封装了当前执行信息的执行上下文
  * 2、msg.sender与msg.data
@@ -158,9 +157,7 @@ abstract contract Context {
     }
 }
 
-
-
-// 
+//
 
 pragma solidity ^0.8.0;
 
@@ -179,7 +176,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         _symbol = symbol_;
     }
 
-    function totalSupply() external view override returns (uint256) {
+    function totalSupply() public view override returns (uint256) {
         return _totalSupply;
     }
 
@@ -288,8 +285,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
 }
 
-
-// 
 pragma solidity ^0.8.0;
 
 /**
@@ -305,8 +300,8 @@ contract TokenPair is ERC20 {
     address public rewardToken; // 奖励代币
     uint256 public rewardSpeed; // 每秒奖励数量
 
-    mapping(address => uint256) claimStartTime; // 开始时间
-    mapping(address => uint256) cacheClainAmount; // 缓存数量
+    mapping(address => uint256) public claimStartTime; // 开始时间
+    mapping(address => uint256) public cacheClainAmount; // 缓存数量
 
     // 池子
     address public token0;
@@ -315,7 +310,7 @@ contract TokenPair is ERC20 {
     uint256 private reserve0; // token0余额
     uint256 private reserve1; // token1余额
 
-    uint256 private rate; // token0/token1 兑换比例，不是一个好办法
+    uint256 public rate; // token0/token1 兑换比例，不是一个好办法
 
     event EAddLiquidity(address indexed sender, uint amount0, uint amount1);
     event ERemoveLiquidity(address indexed sender, uint amount);
@@ -370,13 +365,6 @@ contract TokenPair is ERC20 {
         IERC20 iToken0 = IERC20(token0);
         IERC20 iToken1 = IERC20(token1);
 
-        // 检查授权数量
-        if (iToken0.allowance(msg.sender, address(this)) < amount0) {
-            revert TokenPair__ApproveToken(token0);
-        }
-        if (iToken1.allowance(msg.sender, address(this)) < amount1) {
-            revert TokenPair__ApproveToken(token1);
-        }
         // 转移代币
         iToken0.transferFrom(msg.sender, address(this), amount0);
         iToken1.transferFrom(msg.sender, address(this), amount1);
@@ -420,9 +408,11 @@ contract TokenPair is ERC20 {
     }
 
     function getSpeed() public view returns (uint256) {
+        if(totalSupply() == 0) {
+            return 0;
+        }
         uint256 amount0 = balanceOf(msg.sender);
-        uint256 totalValue = balanceOf(address(this));
-        uint256 speed = (amount0 / totalValue) * rewardSpeed;
+        uint256 speed = (amount0 / totalSupply()) * rewardSpeed;
         return speed;
     }
 

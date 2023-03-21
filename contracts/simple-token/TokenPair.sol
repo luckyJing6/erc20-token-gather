@@ -17,8 +17,8 @@ contract TokenPair is ERC20 {
     address public rewardToken; // 奖励代币
     uint256 public rewardSpeed; // 每秒奖励数量
 
-    mapping(address => uint256) claimStartTime; // 开始时间
-    mapping(address => uint256) cacheClainAmount; // 缓存数量
+    mapping(address => uint256) public claimStartTime; // 开始时间
+    mapping(address => uint256) public cacheClainAmount; // 缓存数量
 
     // 池子
     address public token0;
@@ -27,7 +27,7 @@ contract TokenPair is ERC20 {
     uint256 private reserve0; // token0余额
     uint256 private reserve1; // token1余额
 
-    uint256 private rate; // token0/token1 兑换比例，不是一个好办法
+    uint256 public rate; // token0/token1 兑换比例，不是一个好办法
 
     event EAddLiquidity(address indexed sender, uint amount0, uint amount1);
     event ERemoveLiquidity(address indexed sender, uint amount);
@@ -81,7 +81,7 @@ contract TokenPair is ERC20 {
     ) public verifyRate(amount0, amount1) returns (uint liquidity) {
         IERC20 iToken0 = IERC20(token0);
         IERC20 iToken1 = IERC20(token1);
-        
+
         // 转移代币
         iToken0.transferFrom(msg.sender, address(this), amount0);
         iToken1.transferFrom(msg.sender, address(this), amount1);
@@ -125,9 +125,11 @@ contract TokenPair is ERC20 {
     }
 
     function getSpeed() public view returns (uint256) {
+        if(totalSupply() == 0) {
+            return 0;
+        }
         uint256 amount0 = balanceOf(msg.sender);
-        uint256 totalValue = balanceOf(address(this));
-        uint256 speed = (amount0 / totalValue) * rewardSpeed;
+        uint256 speed = (amount0 / totalSupply()) * rewardSpeed;
         return speed;
     }
 
