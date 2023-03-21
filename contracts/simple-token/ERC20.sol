@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import "../interface/IERC20.sol";
 import "../interface/IERC20Metadata.sol";
-import "../interface/Context.sol";
+import "./Context.sol";
 
 contract ERC20 is Context, IERC20, IERC20Metadata {
     // 普通账户地址 -> 余额
@@ -35,9 +35,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * 查询账户余额
      * @param account 账户地址
      */
-    function balanceOf(
-        address account
-    ) external view override returns (uint256) {
+    function balanceOf(address account) public view override returns (uint256) {
         return _balances[account];
     }
 
@@ -104,6 +102,19 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         _totalSupply += amount;
         _balances[account] += amount;
         emit Transfer(address(0), account, amount);
+    }
+
+    function _burn(address account, uint256 amount) internal virtual {
+        require(account != address(0), "ERC20: burn from the zero address");
+
+        uint256 accountBalance = _balances[account];
+        require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
+        unchecked {
+            _balances[account] = accountBalance - amount;
+        }
+        _totalSupply -= amount;
+
+        emit Transfer(account, address(0), amount);
     }
 
     function name() external view override returns (string memory) {

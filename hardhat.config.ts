@@ -19,6 +19,11 @@ const config: HardhatUserConfig = {
       accounts: [process.env.PRIVATE_KEY!],
       chainId: 5,
     },
+    bscTest: {
+      url: process.env.BSC_TESTNET_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY!],
+      chainId: 97
+    },
     dev: {
       url: 'HTTP://127.0.0.1:7545',
       chainId: 1337
@@ -34,7 +39,8 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      goerli: process.env.ETHERSCAN_GOERLI_KEY!
+      goerli: process.env.ETHERSCAN_GOERLI_KEY!,
+      bscTest: process.env.BSCSCAN_TESTNET_KEY!
     },
     customChains: [
       {
@@ -43,6 +49,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api-goerli.etherscan.io/api",
           browserURL: "https://goerli.etherscan.io"
+        }
+      },
+      {
+        network: "bscTest",
+        chainId: 97,
+        urls: {
+          apiURL: "https://api-testnet.bscscan.com/api",
+          browserURL: "https://testnet.bscscan.com/"
         }
       }
     ]

@@ -1,1 +1,1 @@
-export const verifyContractChainIds: Array<string | number> = [5]
+export const verifyContractChainIds: Array<string | number> = [5, 97]

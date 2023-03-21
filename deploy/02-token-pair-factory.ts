@@ -10,19 +10,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const deployer = (await getNamedAccounts()).deployer
   const chainId = network.config.chainId!
 
-  const simpleTokenDeploy = await deploy("SimpleToken", {
+  const TokenPairFactoryDeploy = await deploy("TokenPairFactory", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1
   })
-  console.log('contract address: ', simpleTokenDeploy.address)
+  console.log('contract address: ', TokenPairFactoryDeploy.address)
 
   if (verifyContractChainIds.includes(chainId)) {
-    await verify(simpleTokenDeploy.address, [], 'contracts/simple-token/SimpleToken.sol:SimpleToken')
+    await verify(TokenPairFactoryDeploy.address, [])
   }
 };
 
-func.tags = ["simple-token", "all"]
+func.tags = ["pair", "all"]
 
 export default func;
